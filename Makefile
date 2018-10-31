@@ -16,3 +16,6 @@ venv/bin/active: requirements.txt
 data/%.csv: data/.created
 	curl -o $@ https://s3-us-west-2.amazonaws.com/jonmpqts-7641/$*.csv
 	touch -m $@
+
+data/%.hd5: data/%.csv %-preprocess.py
+	$(PYTHON) $*-preprocess.py data/$*.csv $@
