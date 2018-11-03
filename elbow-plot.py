@@ -10,7 +10,7 @@ with h5py.File(dataset, 'r') as f:
     x_train = np.array(f['x_train'])
 
 classifiers = joblib.load(classifiers_path)
-scores = [classifiers[k].score(x_train) for k in classifiers.keys()]
+scores = [-classifiers[k].score(x_train) for k in classifiers.keys()]
 
 plt.xlabel('Number of Clusters')
 plt.ylabel('Score')
