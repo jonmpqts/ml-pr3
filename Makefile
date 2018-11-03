@@ -25,5 +25,11 @@ data/%.hd5: data/%.csv %-preprocess.py
 models/%-km.joblib: models/.created data/%.hd5 %-km.json
 	$(PYTHON) km.py data/$*.hd5 $*-km.json $@
 
+models/%-gmm.joblib: models/.created data/%.hd5 %-gmm.json gmm.py
+	$(PYTHON) gmm.py data/$*.hd5 $*-gmm.json $@
+
 output/%-km-elbow.png: output/.created data/%.hd5 models/%-km.joblib elbow-plot.py
 	$(PYTHON) elbow-plot.py data/$*.hd5 models/$*-km.joblib $@
+
+output/%-gmm-elbow.png: output/.created data/%.hd5 models/%-gmm.joblib elbow-plot.py
+	$(PYTHON) elbow-plot.py data/$*.hd5 models/$*-gmm.joblib $@
