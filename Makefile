@@ -1,5 +1,7 @@
 PYTHON=venv/bin/python
 
+SECONDARY: data/.created models/.created output/.created
+
 venv: venv/bin/active
 
 venv/bin/active: requirements.txt
