@@ -19,3 +19,6 @@ data/%.csv: data/.created
 
 data/%.hd5: data/%.csv %-preprocess.py
 	$(PYTHON) $*-preprocess.py data/$*.csv $@
+
+models/%-km.joblib: models/.created data/%.hd5 %-km.json
+	$(PYTHON) km.py data/$*.hd5 $*-km.json $@
