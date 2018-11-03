@@ -22,7 +22,7 @@ data/%.csv: data/.created
 data/%.hd5: data/%.csv %-preprocess.py
 	$(PYTHON) $*-preprocess.py data/$*.csv $@
 
-models/%-km.joblib: models/.created data/%.hd5 %-km.json
+models/%-km.joblib: models/.created data/%.hd5 %-km.json km.py
 	$(PYTHON) km.py data/$*.hd5 $*-km.json $@
 
 models/%-gmm.joblib: models/.created data/%.hd5 %-gmm.json gmm.py
