@@ -1,4 +1,5 @@
 PYTHON=venv/bin/python
+PDFLATEX=pdflatex
 
 SECONDARY: data/.created models/.created output/.created
 
@@ -33,3 +34,6 @@ output/%-km-elbow.png: output/.created data/%.hd5 models/%-km.joblib elbow-plot.
 
 output/%-gmm-elbow.png: output/.created data/%.hd5 models/%-gmm.joblib elbow-plot.py
 	$(PYTHON) elbow-plot.py data/$*.hd5 models/$*-gmm.joblib $@
+
+output/analysis.pdf: output/.created ml-pr3-analysis/analysis.tex
+	$(PDFLATEX) -output-directory=output ml-pr3-analysis/analysis.tex
