@@ -14,6 +14,8 @@ scores = [-classifiers[k].score(x_train) for k in classifiers.keys()]
 
 plt.xlabel('Number of Clusters')
 plt.ylabel('Score')
+plt.xticks(list(classifiers.keys()))
+plt.xlim(xmin=1)
 plt.gca().xaxis.grid(True)
 plt.plot(classifiers.keys(), scores)
 plt.savefig(output)
