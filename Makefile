@@ -8,12 +8,14 @@ SECONDARY: build/.created \
 	build/titanic/rf/.created build/titanic/rf/model.joblib build/titanic/rf/chart.png build/titanic/rf/data.hd5 \
 	build/titanic/km/rf/.created build/titanic/km/rf/model.joblib build/titanic/km/rf/elbow.png \
 	build/titanic/gmm/rf/.created build/titanic/gmm/rf/model.joblib build/titanic/gmm/rf/elbow.png \
+	build/titanic/pca/.created build/titanic/pca/chart.png \
 	build/redwine/.created build/redwine/data.csv build/redwine/data.hd5 build/redwine/timing.png build/redwine/iterations.png \
 	build/redwine/km/.created build/redwine/km/model.joblib build/redwine/km/elbow.png \
 	build/redwine/gmm/.created build/redwine/gmm/model.joblib build/redwine/gmm/elbow.png \
 	build/redwine/rf/.created build/redwine/rf/model.joblib build/redwine/rf/chart.png build/redwine/rf/data.hd5
 	build/redwine/km/rf/.created build/redwine/km/rf/model.joblib build/redwine/km/rf/elbow.png \
 	build/redwine/gmm/rf/.created build/redwine/gmm/rf/model.joblib build/redwine/gmm/rf/elbow.png
+	build/redwine/pca/.created build/redwine/pca/chart.png
 
 venv/bin/python: requirements.txt
 	test -d venv || virtualenv -p python3 venv
@@ -72,6 +74,9 @@ build/%/gmm/rf/model.joblib: build/%/gmm/rf/.created build/%/rf/data.hd5 %-gmm.j
 build/%/gmm/rf/elbow.png: build/%/data.hd5 build/%/gmm/rf/model.joblib elbow-plot.py
 	$(PYTHON) elbow-plot.py build/$*/rf/data.hd5 build/$*/gmm/rf/model.joblib $@
 
+build/%/pca/chart.png: build/%/pca/.created build/%/data.hd5 pca-chart.py
+	$(PYTHON) pca-chart.py build/$*/data.hd5 $@
+
 build/analysis.pdf: \
 	build/.created \
 	ml-pr3-analysis/analysis.tex \
@@ -88,5 +93,7 @@ build/analysis.pdf: \
 	build/titanic/km/rf/elbow.png \
 	build/redwine/km/rf/elbow.png \
 	build/titanic/gmm/rf/elbow.png \
-	build/redwine/gmm/rf/elbow.png
+	build/redwine/gmm/rf/elbow.png \
+	build/titanic/pca/chart.png \
+	build/redwine/pca/chart.png
 	$(PDFLATEX) -output-directory=build ml-pr3-analysis/analysis.tex
