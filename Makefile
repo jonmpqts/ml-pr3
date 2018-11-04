@@ -184,5 +184,6 @@ build/analysis.pdf: \
 	build/redwine/histogram.png
 	$(PDFLATEX) -output-directory=build ml-pr3-analysis/analysis.tex
 	cp ml-pr3-analysis/Bibliography.bib build
+	cd build && $(BIBTEX) analysis
 	$(PDFLATEX) -output-directory=build ml-pr3-analysis/analysis.tex
 	$(PDFLATEX) -output-directory=build ml-pr3-analysis/analysis.tex
