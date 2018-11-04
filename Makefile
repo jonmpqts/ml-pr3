@@ -12,6 +12,7 @@ SECONDARY: build/.created \
 	build/titanic/km/pca/.created build/titanic/km/pca/model.joblib build/titanic/km/pca/elbow.png \
 	build/titanic/gmm/pca/.created build/titanic/gmm/pca/model.joblib build/titanic/gmm/pca/elbow.png \
 	build/titanic/ica/.created build/titanic/ica/data.hd5 build/titanic/ica/chart.png \
+	build/titanic/rp/.created build/titanic/rp/chart.png \
 	build/redwine/.created build/redwine/data.csv build/redwine/data.hd5 build/redwine/timing.png build/redwine/iterations.png \
 	build/redwine/km/.created build/redwine/km/model.joblib build/redwine/km/elbow.png \
 	build/redwine/gmm/.created build/redwine/gmm/model.joblib build/redwine/gmm/elbow.png \
@@ -21,7 +22,8 @@ SECONDARY: build/.created \
 	build/redwine/pca/.created build/redwine/data.hd5 build/redwine/pca/chart.png \
 	build/redwine/km/pca/.created build/redwine/km/pca/model.joblib build/redwine/km/pca/elbow.png \
 	build/redwine/gmm/pca/.created build/redwine/gmm/pca/model.joblib build/redwine/gmm/pca/elbow.png \
-	build/redwine/ica/.created build/redwine/ica/data.hd5 build/redwine/ica/chart.png
+	build/redwine/ica/.created build/redwine/ica/data.hd5 build/redwine/ica/chart.png \
+	build/redwine/rp/.created build/redwine/rp/chart.png
 
 venv/bin/python: requirements.txt
 	test -d venv || virtualenv -p python3 venv
@@ -116,6 +118,9 @@ build/%/gmm/ica/model.joblib: build/%/gmm/ica/.created build/%/ica/data.hd5 %-gm
 build/%/gmm/ica/elbow.png: build/%/data.hd5 build/%/gmm/ica/model.joblib elbow-plot.py
 	$(PYTHON) elbow-plot.py build/$*/ica/data.hd5 build/$*/gmm/ica/model.joblib $@
 
+build/%/rp/chart.png: build/%/rp/.created build/%/data.hd5 rp-chart.py
+	$(PYTHON) rp-chart.py build/$*/data.hd5 $@
+
 build/analysis.pdf: \
 	build/.created \
 	ml-pr3-analysis/analysis.tex \
@@ -144,5 +149,7 @@ build/analysis.pdf: \
 	build/titanic/km/ica/elbow.png \
 	build/titanic/gmm/ica/elbow.png \
 	build/redwine/km/ica/elbow.png \
-	build/redwine/gmm/ica/elbow.png
+	build/redwine/gmm/ica/elbow.png \
+	build/titanic/rp/chart.png \
+	build/redwine/rp/chart.png
 	$(PDFLATEX) -output-directory=build ml-pr3-analysis/analysis.tex
