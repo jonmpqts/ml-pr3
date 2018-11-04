@@ -12,7 +12,9 @@ SECONDARY: build/.created \
 	build/titanic/km/pca/.created build/titanic/km/pca/model.joblib build/titanic/km/pca/elbow.png \
 	build/titanic/gmm/pca/.created build/titanic/gmm/pca/model.joblib build/titanic/gmm/pca/elbow.png \
 	build/titanic/ica/.created build/titanic/ica/data.hd5 build/titanic/ica/chart.png \
-	build/titanic/rp/.created build/titanic/rp/chart.png \
+	build/titanic/rp/.created build/titanic/rp/data.hd5 build/titanic/rp/chart.png \
+	build/titanic/km/rp/.created build/titanic/km/rp/model.joblib build/titanic/km/rp/elbow.png \
+	build/titanic/gmm/rp/.created build/titanic/gmm/rp/model.joblib build/titanic/gmm/rp/elbow.png \
 	build/redwine/.created build/redwine/data.csv build/redwine/data.hd5 build/redwine/timing.png build/redwine/iterations.png \
 	build/redwine/km/.created build/redwine/km/model.joblib build/redwine/km/elbow.png \
 	build/redwine/gmm/.created build/redwine/gmm/model.joblib build/redwine/gmm/elbow.png \
@@ -23,7 +25,9 @@ SECONDARY: build/.created \
 	build/redwine/km/pca/.created build/redwine/km/pca/model.joblib build/redwine/km/pca/elbow.png \
 	build/redwine/gmm/pca/.created build/redwine/gmm/pca/model.joblib build/redwine/gmm/pca/elbow.png \
 	build/redwine/ica/.created build/redwine/ica/data.hd5 build/redwine/ica/chart.png \
-	build/redwine/rp/.created build/redwine/rp/chart.png
+	build/redwine/rp/.created build/redwine/rp/data.hd5 build/redwine/rp/chart.png \
+	build/redwine/km/rp/.created build/redwine/km/rp/model.joblib build/redwine/km/rp/elbow.png \
+	build/redwine/gmm/rp/.created build/redwine/gmm/rp/model.joblib build/redwine/gmm/rp/elbow.png
 
 venv/bin/python: requirements.txt
 	test -d venv || virtualenv -p python3 venv
@@ -121,6 +125,21 @@ build/%/gmm/ica/elbow.png: build/%/data.hd5 build/%/gmm/ica/model.joblib elbow-p
 build/%/rp/chart.png: build/%/rp/.created build/%/data.hd5 rp-chart.py
 	$(PYTHON) rp-chart.py build/$*/data.hd5 $@
 
+build/%/rp/data.hd5: build/%/rp/.created build/%/data.hd5 %-rp.json rp-dataset.py
+	$(PYTHON) rp-dataset.py build/$*/data.hd5 $*-rp.json $@
+
+build/%/km/rp/model.joblib: build/%/km/rp/.created build/%/rp/data.hd5 %-km.json km.py
+	$(PYTHON) km.py build/$*/rp/data.hd5 $*-km.json $@
+
+build/%/km/rp/elbow.png: build/%/data.hd5 build/%/km/rp/model.joblib elbow-plot.py
+	$(PYTHON) elbow-plot.py build/$*/rp/data.hd5 build/$*/km/rp/model.joblib $@
+
+build/%/gmm/rp/model.joblib: build/%/gmm/rp/.created build/%/rp/data.hd5 %-gmm.json gmm.py
+	$(PYTHON) gmm.py build/$*/rp/data.hd5 $*-gmm.json $@
+
+build/%/gmm/rp/elbow.png: build/%/data.hd5 build/%/gmm/rp/model.joblib elbow-plot.py
+	$(PYTHON) elbow-plot.py build/$*/rp/data.hd5 build/$*/gmm/rp/model.joblib $@
+
 build/analysis.pdf: \
 	build/.created \
 	ml-pr3-analysis/analysis.tex \
@@ -151,5 +170,9 @@ build/analysis.pdf: \
 	build/redwine/km/ica/elbow.png \
 	build/redwine/gmm/ica/elbow.png \
 	build/titanic/rp/chart.png \
-	build/redwine/rp/chart.png
+	build/redwine/rp/chart.png \
+	build/titanic/km/rp/elbow.png \
+	build/titanic/gmm/rp/elbow.png \
+	build/redwine/km/rp/elbow.png \
+	build/redwine/gmm/rp/elbow.png
 	$(PDFLATEX) -output-directory=build ml-pr3-analysis/analysis.tex
