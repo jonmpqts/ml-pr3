@@ -2,6 +2,7 @@ import sys
 import h5py
 import json
 import numpy as np
+from time import clock
 from sklearn.cluster import KMeans
 from sklearn.externals import joblib
 
@@ -17,7 +18,9 @@ classifiers = {}
 
 for k in settings['clusters']:
     km = KMeans(n_clusters=k, random_state=0)
+    st = clock()
     km.fit(x_train)
+    km.time = clock() - st
     classifiers[k] = km
 
 joblib.dump(classifiers, output)

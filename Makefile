@@ -2,10 +2,10 @@ PYTHON=venv/bin/python
 PDFLATEX=pdflatex
 
 SECONDARY: build/.created \
-	build/titanic/.created build/titanic/data.csv build/titanic/data.hd5 \
+	build/titanic/.created build/titanic/data.csv build/titanic/data.hd5 build/titanic/timing.png build/titanic/iterations.png \
 	build/titanic/km/.created build/titanic/km/model.joblib build/titanic/km/elbow.png \
 	build/titanic/gmm/.created build/titanic/gmm/model.joblib build/titanic/gmm/elbow.png \
-	build/redwine/.created build/redwine/data.csv build/redwine/data.hd5 \
+	build/redwine/.created build/redwine/data.csv build/redwine/data.hd5 build/redwine/timing.png build/redwine/iterations.png \
 	build/redwine/km/.created build/redwine/km/model.joblib build/redwine/km/elbow.png \
 	build/redwine/gmm/.created build/redwine/gmm/model.joblib build/redwine/gmm/elbow.png
 
@@ -39,11 +39,21 @@ build/%/km/elbow.png: build/%/km/.created build/%/data.hd5 build/%/km/model.jobl
 build/%/gmm/elbow.png: build/%/gmm/.created build/%/data.hd5 build/%/gmm/model.joblib elbow-plot.py
 	$(PYTHON) elbow-plot.py build/$*/data.hd5 build/$*/gmm/model.joblib $@
 
+build/%/timing.png: build/%/km/model.joblib build/%/gmm/model.joblib timing-plot.py
+	$(PYTHON) timing-plot.py build/$*/km/model.joblib build/$*/gmm/model.joblib $@
+
+build/%/iterations.png: build/%/km/model.joblib build/%/gmm/model.joblib iterations-plot.py
+	$(PYTHON) iterations-plot.py build/$*/km/model.joblib build/$*/gmm/model.joblib $@
+
 build/analysis.pdf: \
 	build/.created \
 	ml-pr3-analysis/analysis.tex \
 	build/titanic/km/elbow.png \
 	build/titanic/gmm/elbow.png \
 	build/redwine/km/elbow.png \
-	build/redwine/gmm/elbow.png
+	build/redwine/gmm/elbow.png \
+	build/titanic/timing.png \
+	build/titanic/iterations.png \
+	build/redwine/timing.png \
+	build/redwine/iterations.png
 	$(PDFLATEX) -output-directory=build ml-pr3-analysis/analysis.tex

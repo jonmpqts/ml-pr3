@@ -2,6 +2,7 @@ import sys
 import h5py
 import json
 import numpy as np
+from time import clock
 from sklearn.mixture import GaussianMixture
 from sklearn.externals import joblib
 
@@ -17,7 +18,9 @@ classifiers = {}
 
 for k in settings['components']:
     gmm = GaussianMixture(n_components=k, random_state=0)
+    st = clock()
     gmm.fit(x_train)
+    gmm.time = clock() - st
     classifiers[k] = gmm
 
 joblib.dump(classifiers, output)
