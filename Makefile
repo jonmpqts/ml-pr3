@@ -1,7 +1,13 @@
 PYTHON=venv/bin/python
 PDFLATEX=pdflatex
 
-SECONDARY: data/.created models/.created output/.created
+SECONDARY: build/.created \
+	build/titanic/.created build/titanic/data.csv build/titanic/data.hd5 \
+	build/titanic/km/.created build/titanic/km/model.joblib build/titanic/km/elbow.png \
+	build/titanic/gmm/.created build/titanic/gmm/model.joblib build/titanic/gmm/elbow.png \
+	build/redwine/.created build/redwine/data.csv build/redwine/data.hd5 \
+	build/redwine/km/.created build/redwine/km/model.joblib build/redwine/km/elbow.png \
+	build/redwine/gmm/.created build/redwine/gmm/model.joblib build/redwine/gmm/elbow.png
 
 venv/bin/python: requirements.txt
 	test -d venv || virtualenv -p python3 venv
@@ -14,24 +20,30 @@ venv/bin/python: requirements.txt
 
 *.py: venv/bin/python
 
-data/%.csv: data/.created
+build/%/data.csv: build/%/.created
 	curl -o $@ https://s3-us-west-2.amazonaws.com/jonmpqts-7641/$*.csv
 	touch -m $@
 
-data/%.hd5: data/%.csv %-preprocess.py
-	$(PYTHON) $*-preprocess.py data/$*.csv $@
+build/%/data.hd5: build/%/data.csv %-preprocess.py
+	$(PYTHON) $*-preprocess.py build/$*/data.csv $@
 
-models/%-km.joblib: models/.created data/%.hd5 %-km.json km.py
-	$(PYTHON) km.py data/$*.hd5 $*-km.json $@
+build/%/km/model.joblib: build/%/km/.created build/%/data.hd5 %-km.json km.py
+	$(PYTHON) km.py build/$*/data.hd5 $*-km.json $@
 
-models/%-gmm.joblib: models/.created data/%.hd5 %-gmm.json gmm.py
-	$(PYTHON) gmm.py data/$*.hd5 $*-gmm.json $@
+build/%/gmm/model.joblib: build/%/gmm/.created build/%/data.hd5 %-gmm.json gmm.py
+	$(PYTHON) gmm.py build/$*/data.hd5 $*-gmm.json $@
 
-output/%-km-elbow.png: output/.created data/%.hd5 models/%-km.joblib elbow-plot.py
-	$(PYTHON) elbow-plot.py data/$*.hd5 models/$*-km.joblib $@
+build/%/km/elbow.png: build/%/km/.created build/%/data.hd5 build/%/km/model.joblib elbow-plot.py
+	$(PYTHON) elbow-plot.py build/$*/data.hd5 build/$*/km/model.joblib $@
 
-output/%-gmm-elbow.png: output/.created data/%.hd5 models/%-gmm.joblib elbow-plot.py
-	$(PYTHON) elbow-plot.py data/$*.hd5 models/$*-gmm.joblib $@
+build/%/gmm/elbow.png: build/%/gmm/.created build/%/data.hd5 build/%/gmm/model.joblib elbow-plot.py
+	$(PYTHON) elbow-plot.py build/$*/data.hd5 build/$*/gmm/model.joblib $@
 
-output/analysis.pdf: output/.created ml-pr3-analysis/analysis.tex
-	$(PDFLATEX) -output-directory=output ml-pr3-analysis/analysis.tex
+build/analysis.pdf: \
+	build/.created \
+	ml-pr3-analysis/analysis.tex \
+	build/titanic/km/elbow.png \
+	build/titanic/gmm/elbow.png \
+	build/redwine/km/elbow.png \
+	build/redwine/gmm/elbow.png
+	$(PDFLATEX) -output-directory=build ml-pr3-analysis/analysis.tex
