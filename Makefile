@@ -1,8 +1,9 @@
 PYTHON=venv/bin/python
 PDFLATEX=pdflatex
+BIBTEX=bibtex
 
 SECONDARY: build/.created \
-	build/titanic/.created build/titanic/data.csv build/titanic/data.hd5 build/titanic/timing.png build/titanic/iterations.png \
+	build/titanic/.created build/titanic/data.csv build/titanic/data.hd5 build/titanic/timing.png build/titanic/iterations.png build/titanic/histogram.png \
 	build/titanic/km/.created build/titanic/km/model.joblib build/titanic/km/elbow.png \
 	build/titanic/gmm/.created build/titanic/gmm/model.joblib build/titanic/gmm/elbow.png \
 	build/titanic/rf/.created build/titanic/rf/model.joblib build/titanic/rf/chart.png build/titanic/rf/data.hd5 \
@@ -15,7 +16,7 @@ SECONDARY: build/.created \
 	build/titanic/rp/.created build/titanic/rp/data.hd5 build/titanic/rp/chart.png \
 	build/titanic/km/rp/.created build/titanic/km/rp/model.joblib build/titanic/km/rp/elbow.png \
 	build/titanic/gmm/rp/.created build/titanic/gmm/rp/model.joblib build/titanic/gmm/rp/elbow.png \
-	build/redwine/.created build/redwine/data.csv build/redwine/data.hd5 build/redwine/timing.png build/redwine/iterations.png \
+	build/redwine/.created build/redwine/data.csv build/redwine/data.hd5 build/redwine/timing.png build/redwine/iterations.png build/redwine/histogram.png \
 	build/redwine/km/.created build/redwine/km/model.joblib build/redwine/km/elbow.png \
 	build/redwine/gmm/.created build/redwine/gmm/model.joblib build/redwine/gmm/elbow.png \
 	build/redwine/rf/.created build/redwine/rf/model.joblib build/redwine/rf/chart.png build/redwine/rf/data.hd5 \
@@ -46,6 +47,9 @@ build/%/data.csv: build/%/.created
 
 build/%/data.hd5: build/%/data.csv %-preprocess.py
 	$(PYTHON) $*-preprocess.py build/$*/data.csv $@
+
+build/%/histogram.png: build/.created build/%/data.csv %-histogram.py
+	$(PYTHON) $*-histogram.py build/$*/data.csv $@
 
 build/%/km/model.joblib: build/%/km/.created build/%/data.hd5 %-km.json km.py
 	$(PYTHON) km.py build/$*/data.hd5 $*-km.json $@
@@ -143,6 +147,7 @@ build/%/gmm/rp/elbow.png: build/%/data.hd5 build/%/gmm/rp/model.joblib elbow-plo
 build/analysis.pdf: \
 	build/.created \
 	ml-pr3-analysis/analysis.tex \
+	ml-pr3-analysis/Bibliography.bib \
 	build/titanic/km/elbow.png \
 	build/titanic/gmm/elbow.png \
 	build/redwine/km/elbow.png \
@@ -174,5 +179,10 @@ build/analysis.pdf: \
 	build/titanic/km/rp/elbow.png \
 	build/titanic/gmm/rp/elbow.png \
 	build/redwine/km/rp/elbow.png \
-	build/redwine/gmm/rp/elbow.png
+	build/redwine/gmm/rp/elbow.png \
+	build/titanic/histogram.png \
+	build/redwine/histogram.png
+	$(PDFLATEX) -output-directory=build ml-pr3-analysis/analysis.tex
+	cp ml-pr3-analysis/Bibliography.bib build
+	$(PDFLATEX) -output-directory=build ml-pr3-analysis/analysis.tex
 	$(PDFLATEX) -output-directory=build ml-pr3-analysis/analysis.tex
