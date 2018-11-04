@@ -5,11 +5,11 @@ SECONDARY: build/.created \
 	build/titanic/.created build/titanic/data.csv build/titanic/data.hd5 build/titanic/timing.png build/titanic/iterations.png \
 	build/titanic/km/.created build/titanic/km/model.joblib build/titanic/km/elbow.png \
 	build/titanic/gmm/.created build/titanic/gmm/model.joblib build/titanic/gmm/elbow.png \
-	build/titanic/rf/.created build/titanic/rf/model.joblib build/titanic/rf/chart.png \
+	build/titanic/rf/.created build/titanic/rf/model.joblib build/titanic/rf/chart.png build/titanic/rf/data.hd5 \
 	build/redwine/.created build/redwine/data.csv build/redwine/data.hd5 build/redwine/timing.png build/redwine/iterations.png \
 	build/redwine/km/.created build/redwine/km/model.joblib build/redwine/km/elbow.png \
 	build/redwine/gmm/.created build/redwine/gmm/model.joblib build/redwine/gmm/elbow.png \
-	build/redwine/rf/.created build/redwine/rf/model.joblib build/redwine/rf/chart.png
+	build/redwine/rf/.created build/redwine/rf/model.joblib build/redwine/rf/chart.png build/redwine/rf/data.hd5
 
 venv/bin/python: requirements.txt
 	test -d venv || virtualenv -p python3 venv
@@ -52,6 +52,9 @@ build/%/rf/model.joblib: build/%/rf/.created build/%/data.hd5 rf.py
 
 build/%/rf/chart.png: build/%/rf/model.joblib rf-chart.py
 	$(PYTHON) rf-chart.py build/$*/rf/model.joblib $@
+
+build/%/rf/data.hd5: build/%/rf/model.joblib build/%/data.hd5 rf-dataset.py
+	$(PYTHON) rf-dataset.py build/$*/rf/model.joblib build/$*/data.hd5 $@
 
 build/analysis.pdf: \
 	build/.created \
