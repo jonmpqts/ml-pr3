@@ -3,18 +3,16 @@ PDFLATEX=pdflatex
 
 SECONDARY: data/.created models/.created output/.created
 
-venv: venv/bin/active
-
-venv/bin/active: requirements.txt
+venv/bin/python: requirements.txt
 	test -d venv || virtualenv -p python3 venv
 	venv/bin/pip install -Ur requirements.txt
-	touch venv/bin/active
+	touch venv/bin/python
 
 %/.created:
 	mkdir -p $(dir $@)
 	touch $@
 
-*.py: venv
+*.py: venv/bin/python
 
 data/%.csv: data/.created
 	curl -o $@ https://s3-us-west-2.amazonaws.com/jonmpqts-7641/$*.csv
