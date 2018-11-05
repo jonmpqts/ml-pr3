@@ -20,4 +20,7 @@ grid = {'alpha': nn_reg, 'hidden_layer_sizes': nn_arch}
 mlp = MLPClassifier(max_iter=2000, early_stopping=True, random_state=0)
 gs = GridSearchCV(mlp, grid, cv=10)
 gs.fit(x_train, y_train)
+score = gs.score(x_test, y_test)
 joblib.dump(gs.best_estimator_, output)
+
+print(score)
