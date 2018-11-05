@@ -2,6 +2,8 @@ PYTHON=venv/bin/python
 PDFLATEX=pdflatex
 BIBTEX=bibtex
 
+all: build/analysis.pdf
+
 SECONDARY: build/.created \
 	build/titanic/.created build/titanic/data.csv build/titanic/data.hd5 build/titanic/timing.png build/titanic/iterations.png build/titanic/histogram.png \
 	build/titanic/km/.created build/titanic/km/model.joblib build/titanic/km/elbow.png \
@@ -16,6 +18,7 @@ SECONDARY: build/.created \
 	build/titanic/rp/.created build/titanic/rp/data.hd5 build/titanic/rp/chart.png \
 	build/titanic/km/rp/.created build/titanic/km/rp/model.joblib build/titanic/km/rp/elbow.png \
 	build/titanic/gmm/rp/.created build/titanic/gmm/rp/model.joblib build/titanic/gmm/rp/elbow.png \
+	build/titanic/nn/.created \
 	build/redwine/.created build/redwine/data.csv build/redwine/data.hd5 build/redwine/timing.png build/redwine/iterations.png build/redwine/histogram.png \
 	build/redwine/km/.created build/redwine/km/model.joblib build/redwine/km/elbow.png \
 	build/redwine/gmm/.created build/redwine/gmm/model.joblib build/redwine/gmm/elbow.png \
@@ -28,7 +31,8 @@ SECONDARY: build/.created \
 	build/redwine/ica/.created build/redwine/ica/data.hd5 build/redwine/ica/chart.png \
 	build/redwine/rp/.created build/redwine/rp/data.hd5 build/redwine/rp/chart.png \
 	build/redwine/km/rp/.created build/redwine/km/rp/model.joblib build/redwine/km/rp/elbow.png \
-	build/redwine/gmm/rp/.created build/redwine/gmm/rp/model.joblib build/redwine/gmm/rp/elbow.png
+	build/redwine/gmm/rp/.created build/redwine/gmm/rp/model.joblib build/redwine/gmm/rp/elbow.png \
+	build/redwine/nn/.created
 
 venv/bin/python: requirements.txt
 	test -d venv || virtualenv -p python3 venv
@@ -143,6 +147,9 @@ build/%/gmm/rp/model.joblib: build/%/gmm/rp/.created build/%/rp/data.hd5 %-gmm.j
 
 build/%/gmm/rp/elbow.png: build/%/data.hd5 build/%/gmm/rp/model.joblib elbow-plot.py
 	$(PYTHON) elbow-plot.py build/$*/rp/data.hd5 build/$*/gmm/rp/model.joblib $@
+
+build/%/nn/model.joblib: build/%/nn/.created build/%/data.hd5 nn.py
+	$(PYTHON) nn.py build/$*/data.hd5 $@
 
 build/analysis.pdf: \
 	build/.created \
